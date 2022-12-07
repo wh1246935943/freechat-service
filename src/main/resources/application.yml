@@ -1,0 +1,16 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/free_chat?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=GMT%2B8
+    username: root
+    password: root
+
+#mybatis-plus:
+#  global-config:
+#    db-config:
+#      id-type: auto
+#  mapper-locations: classpath:mapper/bilin_service/*Mapper.xml
+#  type-aliases-package: com.bilin.bilin_service.entity
+#logging:
+#  level:
+#    com.bilin.bilin_service.dao: trace
