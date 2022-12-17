@@ -4,5 +4,7 @@ import com.doudou.freechat.dao.UserDao;
 
 public interface UserService {
 
-    UserDao getUserInfo(Long userId);
+    UserDao getUserInfoById(Long userId);
+
+    UserDao getUserInfoByName(String userName);
 }

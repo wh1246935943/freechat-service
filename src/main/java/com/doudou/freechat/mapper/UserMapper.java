@@ -10,4 +10,7 @@ public interface UserMapper {
     @Select("SELECT * FROM user WHERE id = #{id}")
     UserDao getUserInfoById(Long id);
 
+    @Select("SELECT * FROM user WHERE userName = #{userName}")
+    UserDao getUserInfoByName(String userName);
+
 }

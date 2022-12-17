@@ -1,44 +1,37 @@
 package com.doudou.freechat.config;
 
 import com.doudou.freechat.filter.JwtFilter;
-import com.doudou.freechat.filter.JwtLoginFilter;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Bean
-    PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
     @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication()
-                .withUser("wanghao")
-                .password("$2a$10$ZsA.oWiUr49Sya72xi3t9eWcCRHFTKdnJgEHo8jgE0rLtUp5IUsje")
-                .roles("user")
+    protected void configure(HttpSecurity httpSecurity) throws Exception {
+        httpSecurity.csrf() // 由于使用的是JWT，我们这里不需要csrf
+                .disable()
+                .sessionManagement() // 基于token，所以不需要session
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .withUser("admin")
-                .password("$2a$10$MXwlos5C9b2imFJWIo1OBeJ/0otxHrYDdfPU/rtoYqh0VUgicrfp6")
-                .roles("admin");
-    }
-
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests()
-                .anyRequest().authenticated()
-                .and()
-                .addFilterBefore(new JwtLoginFilter("/auth/login", authenticationManager()), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(new JwtFilter(), UsernamePasswordAuthenticationFilter.class)
-                .csrf().disable();
+                .authorizeRequests()
+                .antMatchers(HttpMethod.GET, // 允许对于网站静态资源的无授权访问
+                        "/",
+                        "/*.html",
+                        "/favicon.ico",
+                        "/**/*.html",
+                        "/**/*.css",
+                        "/**/*.js",
+                        "/swagger-resources/**",
+                        "/v2/api-docs/**"
+                ).permitAll()
+                .antMatchers("/**").permitAll()
+                .antMatchers(HttpMethod.OPTIONS).permitAll()//跨域请求会先进行一次options请求
+                .anyRequest().authenticated();
+        httpSecurity.addFilterBefore(new JwtFilter(), UsernamePasswordAuthenticationFilter.class);
     }
 }

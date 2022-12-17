@@ -14,8 +14,13 @@ public class UserServiceImpl implements UserService {
     @Resource
     private UserMapper userMapper;
 
-    public UserDao getUserInfo(Long userId) {
-        UserDao userInfo = userMapper.getUserInfoById(userId);
-        return userInfo;
+    public UserDao getUserInfoById(Long userId) {
+        UserDao UserDao = userMapper.getUserInfoById(userId);
+        return UserDao;
+    }
+
+    public UserDao getUserInfoByName(String userName) {
+        UserDao UserDao = userMapper.getUserInfoByName(userName);
+        return UserDao;
     }
 }
