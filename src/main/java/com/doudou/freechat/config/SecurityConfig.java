@@ -1,6 +1,8 @@
 package com.doudou.freechat.config;
 
 import com.doudou.freechat.filter.JwtFilter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -10,6 +12,14 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+    @Value("${jwt.token}")
+    private String token;
+    @Value("${jwt.secret}")
+    private String secret;
+
+    @Autowired
+    IgnoreUrlsConfig ignoreUrlsConfig;
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
@@ -30,8 +40,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/v2/api-docs/**"
                 ).permitAll()
                 .antMatchers("/**").permitAll()
-                .antMatchers(HttpMethod.OPTIONS).permitAll()//跨域请求会先进行一次options请求
+                .antMatchers(HttpMethod.OPTIONS).permitAll() // 跨域请求会先进行一次options请求
                 .anyRequest().authenticated();
-        httpSecurity.addFilterBefore(new JwtFilter(), UsernamePasswordAuthenticationFilter.class);
+        httpSecurity.addFilterBefore(
+                new JwtFilter(token, secret, ignoreUrlsConfig.getUrls()),
+                UsernamePasswordAuthenticationFilter.class
+        );
     }
 }

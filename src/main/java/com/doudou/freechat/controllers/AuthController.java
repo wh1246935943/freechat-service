@@ -1,7 +1,9 @@
 package com.doudou.freechat.controllers;
 
 import com.doudou.freechat.service.AuthService;
+import com.doudou.freechat.vo.LoginVo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
@@ -13,28 +15,32 @@ public class AuthController {
 
     @Autowired
     AuthService authService;
+    @Value("${jwt.token}")
+    private String token;
+    @Value("${jwt.expiration}")
+    private int expiration;
 
     @PostMapping("/login")
-    public String login(
+    public LoginVo login(
             @RequestBody Map<String, String> user,
             HttpServletResponse response
     ) {
         String userName = user.get("userName");
         String password = user.get("password");
 
+        LoginVo loginVo = null;
+
         if (userName != null && password != null) {
-            String token = authService.login(userName, password);
-            if (token == null) {
-                return "账号不存在或密码错误";
+            loginVo = authService.login(userName, password);
+            if (loginVo != null) {
+                Cookie cookie = new Cookie(this.token, loginVo.getToken());
+                cookie.setMaxAge(this.expiration);
+                cookie.setPath("/"); // 设置路径
+                response.addCookie(cookie);
             }
-            Cookie cookie = new Cookie("token", token);
-            cookie.setMaxAge(60 * 60 * 24); // 设置过期时间为一小时
-            cookie.setPath("/"); // 设置路径
-            response.addCookie(cookie);
-            return token;
         }
 
-        return "账号不存在或密码错误";
+        return loginVo;
     }
 
     @PostMapping("/verCode")

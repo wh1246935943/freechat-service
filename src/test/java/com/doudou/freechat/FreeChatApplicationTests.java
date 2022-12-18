@@ -10,8 +10,8 @@ class FreeChatApplicationTests {
     @Test
     void contextLoads() {
 
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        System.out.println(encoder.encode("wanghao"));
+//        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+//        System.out.println(encoder.encode("wanghao"));
     }
 
 }

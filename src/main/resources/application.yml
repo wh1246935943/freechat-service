@@ -5,12 +5,14 @@ spring:
     username: root
     password: root
 
-#mybatis-plus:
-#  global-config:
-#    db-config:
-#      id-type: auto
-#  mapper-locations: classpath:mapper/bilin_service/*Mapper.xml
-#  type-aliases-package: com.bilin.bilin_service.entity
-#logging:
-#  level:
-#    com.bilin.bilin_service.dao: trace
+ignored:
+  urls:
+    - /auth/login
+    - /auth/register
+    - /auth/verCode
+    - /common/pre
+
+jwt:
+  token: token # cookie字段名
+  secret: doudou@freechat # 加密key
+  expiration: 604800 # jwt的超期限时间(60*60*24*7)

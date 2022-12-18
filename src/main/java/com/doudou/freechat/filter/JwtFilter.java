@@ -1,5 +1,4 @@
 package com.doudou.freechat.filter;
-
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -15,10 +14,20 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class JwtFilter extends GenericFilterBean {
+
+    private String token;
+    private String secret;
+    private List<String> ignoreUrls;
+
+    public JwtFilter(String token, String secret, List<String> ignoreUrls) {
+        this.token = token;
+        this.secret = secret;
+        this.ignoreUrls = ignoreUrls;
+    }
 
     @Override
     public void doFilter(
@@ -30,11 +39,6 @@ public class JwtFilter extends GenericFilterBean {
         /**
          * 过滤不需要鉴权的请求
          */
-        List<String> ignoreUrls = new ArrayList<>();
-        ignoreUrls.add("/auth/login");
-        ignoreUrls.add("/auth/register");
-        ignoreUrls.add("/auth/verCode");
-        ignoreUrls.add("/common/pre");
         if (ignoreUrls.contains(req.getRequestURI())) {
             filterChain.doFilter(servletRequest, servletResponse);
             return;
@@ -46,30 +50,41 @@ public class JwtFilter extends GenericFilterBean {
         String jwtToken = null;
         if (cookies != null) {
             for(Cookie c :cookies ){
-                if (c.getName().equals("token")) {
+                if (c.getName().equals(token)) {
                     jwtToken = c.getValue();
-                    System.out.println(jwtToken);
                 }
             }
         }
-
+        /**
+         * 解析token
+         * 如果解析失败了则直接返回错误信息给前端
+         */
+        String userName = null;
         try {
-            Claims claims = Jwts.parser().setSigningKey("doudou@freechat")
-                    .parseClaimsJws(jwtToken.replace("Bearer", "")).getBody();
-            String userName = claims.getSubject();
+            userName = Jwts.parser()
+                    .setSigningKey(secret)
+                    .parseClaimsJws(jwtToken.replace("Bearer", ""))
+                    .getBody()
+                    .getSubject();
+        } catch (Exception e) {}
+        /**
+         * 解析成功进入下一步
+         */
+        if (userName != null) {
             UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(userName, null, null);
             SecurityContextHolder.getContext().setAuthentication(token);
             filterChain.doFilter(servletRequest, servletResponse);
-        } catch (Exception e) {
-            e.printStackTrace();
-
-            HttpServletResponse res = (HttpServletResponse) servletResponse;
-            res.setContentType("application/json;charset=utf-8");
-            res.setStatus(403);
-            PrintWriter out = res.getWriter();
-            out.write("登录已过期或请求不存在");
-            out.flush();
-            out.close();
+            return;
         }
+        /**
+         * 解析失败
+         */
+        HttpServletResponse res = (HttpServletResponse) servletResponse;
+        res.setContentType("application/json;charset=utf-8");
+        res.setStatus(403);
+        PrintWriter out = res.getWriter();
+        out.println("{\"message\": \"未登录或登录状态已过期\", \"code\": 403}");
+        out.flush();
+        out.close();
     }
 }
