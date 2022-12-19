@@ -11,4 +11,6 @@ public interface UserMapper {
 
     UserDao getUserInfoByName(@Param("userName") String userName);
 
+    Long addUser(UserDao record);
+
 }

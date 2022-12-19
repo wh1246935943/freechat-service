@@ -15,6 +15,7 @@ ignored:
     - /auth/register
     - /auth/verCode
     - /common/pre
+    - /auth/logout
 
 jwt:
   token: token # cookie字段名

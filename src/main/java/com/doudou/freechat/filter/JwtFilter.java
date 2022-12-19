@@ -1,10 +1,9 @@
 package com.doudou.freechat.filter;
-import io.jsonwebtoken.Claims;
+
 import io.jsonwebtoken.Jwts;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.GenericFilterBean;
-
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
@@ -83,7 +82,7 @@ public class JwtFilter extends GenericFilterBean {
         res.setContentType("application/json;charset=utf-8");
         res.setStatus(403);
         PrintWriter out = res.getWriter();
-        out.println("{\"message\": \"未登录或登录状态已过期\", \"code\": 403}");
+        out.println("{\"message\": \"未登录或登录状态已过期\", \"code\": 401}");
         out.flush();
         out.close();
     }

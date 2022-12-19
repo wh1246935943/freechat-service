@@ -1,5 +1,6 @@
 package com.doudou.freechat.controllers;
  
+import com.doudou.freechat.common.api.CommonResult;
 import com.doudou.freechat.dao.UserDao;
 import com.doudou.freechat.service.UserService;
 import com.doudou.freechat.vo.UserVo;
@@ -15,18 +16,14 @@ public class UserController {
     private UserService userService;
 
     @GetMapping("/{id}")
-    public UserVo getUserInfo(@PathVariable Long id) {
+    public CommonResult getUserInfo(@PathVariable Long id) {
 
-        UserDao userDao = userService.getUserInfoById(id);
+        UserVo userVo = userService.getUserInfoById(id);
 
-        UserVo userVo = new UserVo();
-
-        if (userDao != null) {
-            userVo.setUserName(userDao.getUserName());
-            userVo.setPersonalitySign(userDao.getPersonalitySign());
-            userVo.setId(userDao.getId());
+        if (userVo == null) {
+            return CommonResult.failed("");
         }
 
-        return userVo;
+        return CommonResult.success(userVo);
     }
 }

@@ -1,11 +1,15 @@
 package com.doudou.freechat.service.impl;
 
+import com.doudou.freechat.common.api.CommonResult;
 import com.doudou.freechat.dao.UserDao;
+import com.doudou.freechat.dto.UserRegisterParamDto;
 import com.doudou.freechat.service.AuthService;
 import com.doudou.freechat.service.UserService;
 import com.doudou.freechat.vo.LoginVo;
+import com.doudou.freechat.vo.UserVo;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -19,8 +23,6 @@ public class AuthServiceImpl implements AuthService {
     private int expiration;
     @Value("${jwt.secret}")
     private String secret;
-
-
     @Autowired
     UserService userService;
 
@@ -41,5 +43,19 @@ public class AuthServiceImpl implements AuthService {
         }
 
         return loginVo;
+    }
+
+    @Override
+    public Long register(UserRegisterParamDto userRegisterParam) {
+        String userName = userRegisterParam.getUserName();
+        UserDao user = userService.getUserInfoByName(userName);
+        if (user != null) {
+            return null;
+        }
+        UserDao userDao = new UserDao();
+        BeanUtils.copyProperties(userRegisterParam, userDao);
+        userDao.setCreateTime(new Date().toString());
+        userDao.setAccountStatus(1);
+        return userService.addUser(userDao);
     }
 }
