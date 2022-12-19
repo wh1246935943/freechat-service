@@ -2,15 +2,13 @@ package com.doudou.freechat.mapper;
 
 import com.doudou.freechat.dao.UserDao;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Param;
 
 @Mapper
 public interface UserMapper {
+    
+    UserDao getUserInfoById(@Param("id") Long id);
 
-    @Select("SELECT * FROM user WHERE id = #{id}")
-    UserDao getUserInfoById(Long id);
-
-    @Select("SELECT * FROM user WHERE userName = #{userName}")
-    UserDao getUserInfoByName(String userName);
+    UserDao getUserInfoByName(@Param("userName") String userName);
 
 }

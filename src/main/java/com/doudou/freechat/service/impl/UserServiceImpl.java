@@ -15,12 +15,10 @@ public class UserServiceImpl implements UserService {
     private UserMapper userMapper;
 
     public UserDao getUserInfoById(Long userId) {
-        UserDao UserDao = userMapper.getUserInfoById(userId);
-        return UserDao;
+        return userMapper.getUserInfoById(userId);
     }
 
     public UserDao getUserInfoByName(String userName) {
-        UserDao UserDao = userMapper.getUserInfoByName(userName);
-        return UserDao;
+        return userMapper.getUserInfoByName(userName);
     }
 }
