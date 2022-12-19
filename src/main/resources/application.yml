@@ -5,6 +5,11 @@ spring:
     username: root
     password: root
 
+# mybatis #
+mybatis:
+  typeAliasesPackage: /com/doudou/freechat/dao
+  mapperLocations: classpath:/mapper/*.xml
+
 ignored:
   urls:
     - /auth/login
