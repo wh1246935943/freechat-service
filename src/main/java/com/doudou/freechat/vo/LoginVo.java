@@ -1,11 +1,11 @@
 package com.doudou.freechat.vo;
 
 public class LoginVo {
-    private Long id;
+    private long id;
 
     private String token;
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -13,7 +13,7 @@ public class LoginVo {
         this.token = token;
     }
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
 

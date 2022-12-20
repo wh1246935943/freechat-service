@@ -7,10 +7,10 @@ import org.apache.ibatis.annotations.Param;
 @Mapper
 public interface UserMapper {
     
-    UserDao getUserInfoById(@Param("id") Long id);
+    UserDao getUserInfoById(@Param("id") long id);
 
     UserDao getUserInfoByName(@Param("userName") String userName);
 
-    Long addUser(UserDao record);
+    long addUser(UserDao record);
 
 }

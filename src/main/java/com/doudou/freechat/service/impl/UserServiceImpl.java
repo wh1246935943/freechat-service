@@ -14,7 +14,7 @@ public class UserServiceImpl implements UserService {
     @Resource
     private UserMapper userMapper;
 
-    public UserVo getUserInfoById(Long userId) {
+    public UserVo getUserInfoById(long userId) {
         UserVo userVo = new UserVo();
         UserDao userDao = userMapper.getUserInfoById(userId);
         if (userDao!= null) {
