@@ -4,6 +4,8 @@ import com.doudou.freechat.dao.UserDao;
 import com.doudou.freechat.mapper.UserMapper;
 import com.doudou.freechat.service.UserService;
 import com.doudou.freechat.vo.UserVo;
+
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -18,9 +20,7 @@ public class UserServiceImpl implements UserService {
         UserVo userVo = new UserVo();
         UserDao userDao = userMapper.getUserInfoById(userId);
         if (userDao!= null) {
-            userVo.setUserName(userDao.getUserName());
-            userVo.setPersonalitySign(userDao.getPersonalitySign());
-            userVo.setId(userDao.getId());
+            BeanUtils.copyProperties(userDao, userVo);
         }
         return userVo;
     }

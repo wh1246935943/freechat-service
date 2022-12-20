@@ -20,8 +20,8 @@ public class UserController {
 
         UserVo userVo = userService.getUserInfoById(id);
 
-        if (userVo == null) {
-            return CommonResult.failed("");
+        if (userVo.getId() == 0L) {
+            return CommonResult.failed("查询的用户不存在");
         }
 
         return CommonResult.success(userVo);

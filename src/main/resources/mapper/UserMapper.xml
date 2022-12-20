@@ -17,9 +17,9 @@
         personalitySign, phoneNumber, avatar,
         email, createTime, accountStatus
         )
-        values (#{userName,jdbcType=VARCHAR}, #{nickName,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR},
-        #{personalitySign,jdbcType=VARCHAR}, #{phoneNumber,jdbcType=VARCHAR}, #{avatar,jdbcType=VARCHAR},
-        #{email,jdbcType=TIMESTAMP}, #{createTime,jdbcType=VARCHAR}, #{accountStatus,jdbcType=INTEGER}
+        values (#{userName}, #{nickName}, #{password},
+        #{personalitySign}, #{phoneNumber}, #{avatar},
+        #{email}, #{createTime}, #{accountStatus}
         )
     </insert>
 </mapper>

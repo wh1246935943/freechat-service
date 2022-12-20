@@ -53,7 +53,7 @@ public class AuthServiceImpl implements AuthService {
             userDao.setAccountStatus(1);
             long userId = userService.addUser(userDao);
             BeanUtils.copyProperties(userRegisterParam, userVo);
-            userVo.setId(userId);
+            userVo.setId(userDao.getId());
             return userVo;
         }
         return null;
