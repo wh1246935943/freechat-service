@@ -9,5 +9,5 @@ public interface UserService {
 
     UserDao getUserInfoByName(String userName);
 
-    Long addUser(UserDao userDao);
+    long addUser(UserDao userDao);
 }

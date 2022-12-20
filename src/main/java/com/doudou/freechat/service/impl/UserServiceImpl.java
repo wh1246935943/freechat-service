@@ -29,7 +29,7 @@ public class UserServiceImpl implements UserService {
         return userMapper.getUserInfoByName(userName);
     }
 
-    public Long addUser(UserDao userDao) {
+    public long addUser(UserDao userDao) {
         return userMapper.addUser(userDao);
     }
 }

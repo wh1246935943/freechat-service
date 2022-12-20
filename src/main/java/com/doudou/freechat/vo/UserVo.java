@@ -2,17 +2,17 @@ package com.doudou.freechat.vo;
 
 public class UserVo {
 
-    private Long id;
+    private long id;
 
     private  String userName;
 
     private String personalitySign;
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
 

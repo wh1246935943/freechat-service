@@ -16,6 +16,7 @@ public class UserRegisterParamDto {
     @Email
     private String email;
     private String phoneNumber;
-    private String nikeName;
+    private String nickName;
     private String avatar;
+    private String personalitySign;
 }

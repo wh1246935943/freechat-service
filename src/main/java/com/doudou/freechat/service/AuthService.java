@@ -8,5 +8,5 @@ public interface AuthService {
 
     LoginVo login(String userName, String password);
 
-    Long register(UserRegisterParamDto userRegisterParam);
+    UserVo register(UserRegisterParamDto userRegisterParam);
 }
