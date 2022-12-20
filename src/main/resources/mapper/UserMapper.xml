@@ -9,17 +9,30 @@
       SELECT * FROM user WHERE userName=#{userName}
     </select>
 
-    <insert id="addUser" parameterType="com.doudou.freechat.dao.UserDao">
-        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
-            SELECT LAST_INSERT_ID()
-        </selectKey>
-        insert into user (userName, nickName, password,
-        personalitySign, phoneNumber, avatar,
-        email, createTime, accountStatus
+    <insert id="addUser" useGeneratedKeys="true" keyProperty="id" parameterType="com.doudou.freechat.dao.UserDao">
+        insert into user (
+                          userName,
+                          nickName,
+                          password,
+                          personalitySign,
+                          phoneNumber,
+                          avatar,
+                          email,
+                          createTime,
+                          accountStatus,
+                          region
         )
-        values (#{userName}, #{nickName}, #{password},
-        #{personalitySign}, #{phoneNumber}, #{avatar},
-        #{email}, #{createTime}, #{accountStatus}
+        values (
+                #{userName},
+                #{nickName},
+                #{password},
+                #{personalitySign},
+                #{phoneNumber},
+                #{avatar},
+                #{email},
+                #{createTime},
+                #{accountStatus},
+                #{region}
         )
     </insert>
 </mapper>

@@ -19,4 +19,5 @@ public class UserRegisterParamDto {
     private String nickName;
     private String avatar;
     private String personalitySign;
+    private String region;
 }

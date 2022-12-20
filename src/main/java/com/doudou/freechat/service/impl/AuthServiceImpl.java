@@ -13,7 +13,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.regex.Pattern;
 
 @Service
 public class AuthServiceImpl implements AuthService {
@@ -28,16 +30,16 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public LoginVo login(String userName, String password) {
         LoginVo loginVo = new LoginVo();
-        UserDao userDao = userService.getUserInfoByName(userName);
-        if (userDao != null && password.equals(userDao.getPassword())) {
-            String jwt = Jwts.builder()
-                    .setSubject(userDao.getUserName())
-                    .setExpiration(new Date(System.currentTimeMillis() + expiration * 1000L))
-                    .signWith(SignatureAlgorithm.HS512, this.secret)
-                    .compact();
-            loginVo.setToken(jwt);
-            loginVo.setId(userDao.getId());
-        }
+        UserVo userVo = userService.getUserInfoByName(userName);
+//        if (userVo != null && password.equals(userVo.getPassword())) {
+//            String jwt = Jwts.builder()
+//                    .setSubject(userDao.getUserName())
+//                    .setExpiration(new Date(System.currentTimeMillis() + expiration * 1000L))
+//                    .signWith(SignatureAlgorithm.HS512, this.secret)
+//                    .compact();
+//            loginVo.setToken(jwt);
+//            loginVo.setId(userDao.getId());
+//        }
         return loginVo;
     }
 
@@ -45,17 +47,23 @@ public class AuthServiceImpl implements AuthService {
     public UserVo register(UserRegisterParamDto userRegisterParam) {
         String userName = userRegisterParam.getUserName();
         UserVo userVo = new UserVo();
-        UserDao user = userService.getUserInfoByName(userName);
+        UserVo user = userService.getUserInfoByName(userName);
         if (user == null) {
             UserDao userDao = new UserDao();
             BeanUtils.copyProperties(userRegisterParam, userDao);
-            userDao.setCreateTime(new Date().toString());
+            userDao.setCreateTime(getDateStr());
             userDao.setAccountStatus(1);
-            long userId = userService.addUser(userDao);
-            BeanUtils.copyProperties(userRegisterParam, userVo);
-            userVo.setId(userDao.getId());
+            userService.addUser(userDao);
+            BeanUtils.copyProperties(userDao, userVo);
             return userVo;
         }
         return null;
+    }
+
+    public String getDateStr() {
+        Date date = new Date();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String dateStr = dateFormat.format(date);
+        return dateStr;
     }
 }

@@ -25,8 +25,13 @@ public class UserServiceImpl implements UserService {
         return userVo;
     }
 
-    public UserDao getUserInfoByName(String userName) {
-        return userMapper.getUserInfoByName(userName);
+    public UserVo getUserInfoByName(String userName) {
+        UserVo userVo = new UserVo();
+        UserDao userDao = userMapper.getUserInfoByName(userName);
+        if (userDao!= null) {
+            BeanUtils.copyProperties(userDao, userVo);
+        }
+        return userVo;
     }
 
     public long addUser(UserDao userDao) {

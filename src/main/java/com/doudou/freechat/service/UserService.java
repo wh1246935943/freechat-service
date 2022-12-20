@@ -7,7 +7,7 @@ public interface UserService {
 
     UserVo getUserInfoById(long userId);
 
-    UserDao getUserInfoByName(String userName);
+    UserVo getUserInfoByName(String userName);
 
     long addUser(UserDao userDao);
 }
