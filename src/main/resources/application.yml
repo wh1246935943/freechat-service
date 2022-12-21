@@ -1,9 +1,15 @@
 spring:
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/free_chat?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=GMT%2B8
-    username: root
-    password: root
+  application:
+    name: doudou-freechat
+  profiles:
+    active: dev #默认为开发环境
+  servlet:
+    multipart:
+      enabled: true #开启文件上传
+      max-file-size: 10MB #限制文件上传大小为10M
+
+server:
+  port: 9001
 
 # 配置 Mybatis.xml 位置
 mybatis:
