@@ -1,18 +1,18 @@
 package com.doudou.freechat.controllers;
  
 import com.doudou.freechat.common.api.CommonResult;
-import com.doudou.freechat.common.api.IErrorCode;
 import com.doudou.freechat.dao.UserDao;
 import com.doudou.freechat.service.UserService;
 import com.doudou.freechat.vo.UserVo;
 import io.jsonwebtoken.Jwts;
+
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 @RestController
 @RequestMapping("/user")
@@ -28,13 +28,12 @@ public class UserController {
 
     @GetMapping("/{id}")
     public CommonResult getUserInfo(@PathVariable long id) {
-
-        UserVo userVo = userService.getUserInfoById(id);
-
-        if (userVo.getId() == 0) {
+        UserDao userDao = userService.getUserInfoById(id);
+        if (userDao == null) {
             return CommonResult.failed("查询的用户不存在");
         }
-
+        UserVo userVo = new UserVo();
+        BeanUtils.copyProperties(userDao, userVo);
         return CommonResult.success(userVo);
     }
 
@@ -55,13 +54,12 @@ public class UserController {
                 }
             }
         } catch (Exception e) {}
-        if (userName == null) {
-            return CommonResult.failed("登录已过期");
+        UserDao userDao = userService.getUserInfoByName(userName);
+        if (userDao == null) {
+            return CommonResult.validateFailed();
         }
-        UserVo userVo = userService.getUserInfoByName(userName);
-        if (userVo.getId() == 0) {
-            return CommonResult.failed("查询的用户不存在");
-        }
+        UserVo userVo = new UserVo();
+        BeanUtils.copyProperties(userDao, userVo);
         return CommonResult.success(userVo);
     }
 }

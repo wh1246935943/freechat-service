@@ -1,12 +1,16 @@
 package com.doudou.freechat.service.impl;
 
 import com.doudou.freechat.dao.UserDao;
+import com.doudou.freechat.dto.UserRegisterParamDto;
 import com.doudou.freechat.mapper.UserMapper;
 import com.doudou.freechat.service.UserService;
 import com.doudou.freechat.vo.UserVo;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.annotation.Resource;
 
@@ -16,25 +20,35 @@ public class UserServiceImpl implements UserService {
     @Resource
     private UserMapper userMapper;
 
-    public UserVo getUserInfoById(long userId) {
-        UserVo userVo = new UserVo();
-        UserDao userDao = userMapper.getUserInfoById(userId);
-        if (userDao!= null) {
-            BeanUtils.copyProperties(userDao, userVo);
-        }
-        return userVo;
+    @Override
+    public UserDao getUserInfoById(long userId) {
+        return userMapper.getUserInfoById(userId);
     }
 
-    public UserVo getUserInfoByName(String userName) {
-        UserVo userVo = new UserVo();
-        UserDao userDao = userMapper.getUserInfoByName(userName);
-        if (userDao!= null) {
-            BeanUtils.copyProperties(userDao, userVo);
-        }
-        return userVo;
+    @Override
+    public UserDao getUserInfoByName(String userName) {
+        return userMapper.getUserInfoByName(userName);
     }
 
-    public long addUser(UserDao userDao) {
-        return userMapper.addUser(userDao);
+    @Override
+    public UserDao addUser(UserRegisterParamDto userRegisterParam) {
+        String userName = userRegisterParam.getUserName();
+        UserDao userDaoTemp = getUserInfoByName(userName);
+        if (userDaoTemp == null) {
+            UserDao userDao = new UserDao();
+            BeanUtils.copyProperties(userRegisterParam, userDao);
+            userDao.setCreateTime(getDateStr());
+            userDao.setAccountStatus(1);
+            userMapper.addUser(userDao);
+            return userDao;
+        }
+        return null;
+    }
+
+    public String getDateStr() {
+        Date date = new Date();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String dateStr = dateFormat.format(date);
+        return dateStr;
     }
 }

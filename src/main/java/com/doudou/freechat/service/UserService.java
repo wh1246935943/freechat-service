@@ -1,13 +1,13 @@
 package com.doudou.freechat.service;
 
 import com.doudou.freechat.dao.UserDao;
-import com.doudou.freechat.vo.UserVo;
+import com.doudou.freechat.dto.UserRegisterParamDto;
 
 public interface UserService {
 
-    UserVo getUserInfoById(long userId);
+    UserDao getUserInfoById(long userId);
 
-    UserVo getUserInfoByName(String userName);
+    UserDao getUserInfoByName(String userName);
 
-    long addUser(UserDao userDao);
+    UserDao addUser(UserRegisterParamDto userRegisterParam);
 }

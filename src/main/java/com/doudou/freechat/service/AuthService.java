@@ -1,12 +1,7 @@
 package com.doudou.freechat.service;
 
-import com.doudou.freechat.dto.UserRegisterParamDto;
-import com.doudou.freechat.vo.LoginVo;
-import com.doudou.freechat.vo.UserVo;
+import com.doudou.freechat.dao.UserDao;
 
 public interface AuthService {
-
-    LoginVo login(String userName, String password);
-
-    UserVo register(UserRegisterParamDto userRegisterParam);
+    UserDao login(String userName, String password);
 }
