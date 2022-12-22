@@ -2,7 +2,6 @@ package com.doudou.freechat.vo;
 
 import lombok.Getter;
 import lombok.Setter;
-import net.sf.jsqlparser.expression.DateTimeLiteralExpression;
 
 @Setter
 @Getter

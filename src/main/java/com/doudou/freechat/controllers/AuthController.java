@@ -7,9 +7,6 @@ import com.doudou.freechat.service.UserService;
 import com.doudou.freechat.util.DDUtil;
 import com.doudou.freechat.vo.LoginVo;
 import com.doudou.freechat.vo.UserVo;
-
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +15,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Date;
 import java.util.Map;
 
 /**
@@ -65,7 +61,7 @@ public class AuthController {
             loginVo.setToken(jwt);
             loginVo.setId(userDao.getId());
 
-            ddUtil.setValue(userName, userDao.getId() + "");
+            ddUtil.setRedisValue(userName, userDao.getId() + "");
             return CommonResult.success(loginVo, "登录成功");
         }
         return CommonResult.validateFailed("用户名或密码错误");
@@ -74,7 +70,7 @@ public class AuthController {
     @PostMapping("/logout")
     public CommonResult logout(HttpServletRequest request) {
         String userName = ddUtil.getUserNameByToken(request);
-        ddUtil.delValue(userName);
+        ddUtil.delRedisValue(userName);
         return CommonResult.success(null, "退出成功");
     }
 

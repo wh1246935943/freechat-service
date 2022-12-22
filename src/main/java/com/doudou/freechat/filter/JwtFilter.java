@@ -44,7 +44,7 @@ public class JwtFilter extends GenericFilterBean {
         // 用户名存在则请求合法
         if (userName != null) {
             // 如果用户不存在于redis缓存中说明已经主动退出了
-            if (null == ddUtil.getValue(userName)) {
+            if (null == ddUtil.getRedisValue(userName)) {
                 checkFail(servletResponse);
                 return;
             }

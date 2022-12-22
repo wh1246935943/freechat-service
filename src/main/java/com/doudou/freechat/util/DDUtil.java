@@ -32,7 +32,7 @@ public class DDUtil {
     /**
      * 获取redis中指定key的value
      */
-    public String getValue(String key) {
+    public String getRedisValue(String key) {
         boolean is = Boolean.TRUE.equals(redisTemplate.hasKey(key));
         if (!is) {
             return null;
@@ -42,32 +42,33 @@ public class DDUtil {
     /**
      * 设置某个数据到redis，使用默认的过期时间
      */
-    public void setValue(String key, String value) {
+    public void setRedisValue(String key, String value) {
         redisTemplate.opsForValue().set(key, value);
         redisTemplate.expire(key, expiration, TimeUnit.SECONDS);
     }
     /**
      * 设置某个数据到redis，并指定过期时间
      */
-    public void setValue(String key, String value, long time) {
+    public void setRedisValue(String key, String value, long time) {
         redisTemplate.opsForValue().set(key, value);
         redisTemplate.expire(key, time, TimeUnit.SECONDS);
     }
     /**
      * 删除redis中指定key
      */
-    public void delValue(String key) {
+    public void delRedisValue(String key) {
         redisTemplate.delete(key);
     }
     /**
      * 删除redis中的一组keys
      */
-    public void delValue(Collection<String> keys) {
+    public void delRedisValue(Collection<String> keys) {
         redisTemplate.delete(keys);
     }
     /**
      * 解析cookies中的token,获取用户名
-     * @return 用户名，如果解析失败，返回null
+     * @return 解析失败null
+     * @return 解析成功返回用户名
      */
     public String getUserNameByToken(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
@@ -89,6 +90,7 @@ public class DDUtil {
     }
     /**
      * 通过用户名创建token
+     * @return token字符串
      */
     public String getToken(String userName) {
         return Jwts.builder()

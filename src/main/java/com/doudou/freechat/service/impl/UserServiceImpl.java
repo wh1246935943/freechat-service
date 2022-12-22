@@ -4,7 +4,6 @@ import com.doudou.freechat.dao.UserDao;
 import com.doudou.freechat.dto.UserRegisterParamDto;
 import com.doudou.freechat.mapper.UserMapper;
 import com.doudou.freechat.service.UserService;
-import com.doudou.freechat.vo.UserVo;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
