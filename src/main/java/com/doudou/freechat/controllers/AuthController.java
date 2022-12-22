@@ -16,18 +16,20 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 import java.util.Map;
 
+/**
+ * 用户认证控制器
+ */
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
 
     @Value("${jwt.expiration}")
     private int expiration;
-    @Value("${jwt.secret}")
-    private String secret;
     @Value("${jwt.token}")
     private String token;
 
@@ -37,6 +39,11 @@ public class AuthController {
     @Resource
     DDUtil ddUtil;
 
+    /**
+     * 用户登录，
+     * 登录成功设置token
+     * 并将用户名存入redis
+     */
     @PostMapping("/login")
     public CommonResult login(
             @RequestBody Map<String, String> user,
@@ -45,41 +52,29 @@ public class AuthController {
         String userName = user.get("userName");
         String password = user.get("password");
 
-        ddUtil.setRedisValue("userName", userName);
-
         UserDao userDao = userService.getUserInfoByName(userName);
         if (userDao != null && password.equals(userDao.getPassword())) {
-            String jwt = Jwts.builder()
-                    .setSubject(userDao.getUserName())
-                    .setExpiration(new Date(System.currentTimeMillis() + expiration * 1000L))
-                    .signWith(SignatureAlgorithm.HS512, secret)
-                    .compact();
-            /**
-             * 设置token
-             */
+            String jwt = ddUtil.getToken(userDao.getUserName());
+
             Cookie cookie = new Cookie(token, jwt);
             cookie.setMaxAge(expiration);
             cookie.setPath("/");
             response.addCookie(cookie);
-            /**
-             * 返回登录成功后的用户id
-             * 和用户token
-             */
+
             LoginVo loginVo = new LoginVo();
             loginVo.setToken(jwt);
             loginVo.setId(userDao.getId());
+
+            ddUtil.setValue(userName, userDao.getId() + "");
             return CommonResult.success(loginVo, "登录成功");
         }
         return CommonResult.validateFailed("用户名或密码错误");
     }
 
     @PostMapping("/logout")
-    public CommonResult logout() {
-
-        String userName = ddUtil.getRedisValue("userName");
-
-        System.out.printf(userName);
-
+    public CommonResult logout(HttpServletRequest request) {
+        String userName = ddUtil.getUserNameByToken(request);
+        ddUtil.delValue(userName);
         return CommonResult.success(null, "退出成功");
     }
 

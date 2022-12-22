@@ -1,14 +1,14 @@
 package com.doudou.freechat.filter;
 
-import io.jsonwebtoken.Jwts;
+import com.doudou.freechat.util.DDUtil;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.GenericFilterBean;
+
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -17,14 +17,12 @@ import java.util.List;
 
 public class JwtFilter extends GenericFilterBean {
 
-    private String token;
-    private String secret;
-    private List<String> ignoreUrls;
+    private final List<String> ignoreUrls;
+    private final DDUtil ddUtil;
 
-    public JwtFilter(String token, String secret, List<String> ignoreUrls) {
-        this.token = token;
-        this.secret = secret;
+    public JwtFilter(DDUtil ddUtil, List<String> ignoreUrls) {
         this.ignoreUrls = ignoreUrls;
+        this.ddUtil = ddUtil;
     }
 
     @Override
@@ -41,34 +39,15 @@ public class JwtFilter extends GenericFilterBean {
             filterChain.doFilter(servletRequest, servletResponse);
             return;
         }
-        /**
-         * 从cookies中获取token
-         */
-        Cookie[] cookies = req.getCookies();
-        String jwtToken = null;
-        if (cookies != null) {
-            for(Cookie c :cookies ){
-                if (c.getName().equals(token)) {
-                    jwtToken = c.getValue();
-                }
-            }
-        }
-        /**
-         * 解析token
-         * 如果解析失败了则直接返回错误信息给前端
-         */
-        String userName = null;
-        try {
-            userName = Jwts.parser()
-                    .setSigningKey(secret)
-                    .parseClaimsJws(jwtToken.replace("Bearer", ""))
-                    .getBody()
-                    .getSubject();
-        } catch (Exception e) {}
-        /**
-         * 解析成功进入下一步
-         */
+        // 获取token中的用户名信息
+        String userName = ddUtil.getUserNameByToken(req);
+        // 用户名存在则请求合法
         if (userName != null) {
+            // 如果用户不存在于redis缓存中说明已经主动退出了
+            if (null == ddUtil.getValue(userName)) {
+                checkFail(servletResponse);
+                return;
+            }
             UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(userName, null, null);
             SecurityContextHolder.getContext().setAuthentication(token);
             filterChain.doFilter(servletRequest, servletResponse);
@@ -77,6 +56,19 @@ public class JwtFilter extends GenericFilterBean {
         /**
          * 解析失败
          */
+//        HttpServletResponse res = (HttpServletResponse) servletResponse;
+//        res.setContentType("application/json;charset=utf-8");
+//        res.setStatus(403);
+//        PrintWriter out = res.getWriter();
+//        out.println("{\"message\": \"未登录或登录状态已过期\", \"code\": 401}");
+//        out.flush();
+//        out.close();
+
+        checkFail(servletResponse);
+
+    }
+
+    private void checkFail(ServletResponse servletResponse) throws IOException {
         HttpServletResponse res = (HttpServletResponse) servletResponse;
         res.setContentType("application/json;charset=utf-8");
         res.setStatus(403);
