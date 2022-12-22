@@ -4,6 +4,7 @@ import com.doudou.freechat.common.api.CommonResult;
 import com.doudou.freechat.dao.UserDao;
 import com.doudou.freechat.dto.UserRegisterParamDto;
 import com.doudou.freechat.service.UserService;
+import com.doudou.freechat.util.DDUtil;
 import com.doudou.freechat.vo.LoginVo;
 import com.doudou.freechat.vo.UserVo;
 
@@ -29,8 +30,12 @@ public class AuthController {
     private String secret;
     @Value("${jwt.token}")
     private String token;
+
     @Resource
     UserService userService;
+
+    @Resource
+    DDUtil ddUtil;
 
     @PostMapping("/login")
     public CommonResult login(
@@ -39,6 +44,9 @@ public class AuthController {
     ) {
         String userName = user.get("userName");
         String password = user.get("password");
+
+        ddUtil.setRedisValue("userName", userName);
+
         UserDao userDao = userService.getUserInfoByName(userName);
         if (userDao != null && password.equals(userDao.getPassword())) {
             String jwt = Jwts.builder()
@@ -67,6 +75,11 @@ public class AuthController {
 
     @PostMapping("/logout")
     public CommonResult logout() {
+
+        String userName = ddUtil.getRedisValue("userName");
+
+        System.out.printf(userName);
+
         return CommonResult.success(null, "退出成功");
     }
 
