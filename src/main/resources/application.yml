@@ -20,10 +20,12 @@ ignored:
     - /
     - /error
     - /favicon.ico
-    - /auth/login
-    - /auth/register
-    - /auth/verCode
-    - /common/pre
+    - /doudou/error
+    - /doudou/favicon.ico
+    - /doudou/auth/login
+    - /doudou/auth/register
+    - /doudou/auth/verCode
+    - /doudou/common/pre
 
 jwt:
   token: token # cookie字段名
