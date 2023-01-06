@@ -3,6 +3,7 @@ package com.doudou.freechat.controllers;
 import com.doudou.freechat.common.api.CommonResult;
 import com.doudou.freechat.dao.UserDao;
 import com.doudou.freechat.dto.UserRegisterParamDto;
+import com.doudou.freechat.service.VerCodeCacheService;
 import com.doudou.freechat.service.UserService;
 import com.doudou.freechat.util.DDUtil;
 import com.doudou.freechat.vo.LoginVo;
@@ -15,6 +16,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -34,6 +36,9 @@ public class AuthController {
 
     @Resource
     DDUtil ddUtil;
+
+    @Resource
+    VerCodeCacheService verCodeCacheService;
 
     /**
      * 用户登录，
@@ -74,9 +79,30 @@ public class AuthController {
         return CommonResult.success(null, "退出成功");
     }
 
-    @PostMapping("/verCode")
-    public CommonResult getVerCode(@RequestBody Map<String, String> user) {
-        return CommonResult.success("123456");
+    @GetMapping("/verCode")
+    public CommonResult getVerCode(@RequestParam(name = "phoneNumber", required = true) String phoneNumber) {
+        // 校验手机号是否合法
+        if (!ddUtil.isPhoneNumber(phoneNumber)) {
+            return CommonResult.failed("手机号码格式不正确");
+        }
+
+        // 检查手机号是否已经注册
+        List<UserDao> users = userService.getUserByPhoneNumber(phoneNumber);
+        if (users.size() > 0) {
+            return CommonResult.failed("该手机号已经注册");
+        }
+        String codeKey = phoneNumber + "_verCode";
+        String codeValue = verCodeCacheService.get(codeKey);
+
+        // 检查是否发送过验证码
+        if (codeValue instanceof String) {
+            return CommonResult.success(codeValue);
+        }
+
+        // 生成验证码，返回给前端并设置到缓存
+        codeValue = ddUtil.generateRandom(6);
+        verCodeCacheService.save(codeKey, codeValue);
+        return CommonResult.success(codeValue);
     }
 
     @PostMapping("/register")

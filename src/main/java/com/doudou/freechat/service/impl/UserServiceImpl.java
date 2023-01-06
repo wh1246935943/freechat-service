@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import javax.annotation.Resource;
 
@@ -27,6 +28,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDao getUserInfoByName(String userName) {
         return userMapper.getUserInfoByName(userName);
+    }
+
+    public List<UserDao> getUserByPhoneNumber(String phoneNumber) {
+        return userMapper.getUserByPhoneNumber(phoneNumber);
     }
 
     @Override

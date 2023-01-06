@@ -3,21 +3,27 @@ package com.doudou.freechat.util;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import java.security.SecureRandom;
 import java.util.Collection;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 封装redis常用操作方法
  */
 @Component
 public class DDUtil {
+
+    private SecureRandom random = new SecureRandom();
 
     @Value("${jwt.expiration}")
     private int expiration;
@@ -97,5 +103,27 @@ public class DDUtil {
                 .setExpiration(new Date(System.currentTimeMillis() + expiration * 1000L))
                 .signWith(SignatureAlgorithm.HS512, secret)
                 .compact();
+    }
+    /**
+     * 动态生成指定长度的随机数
+     * @param length 生成随机数的长度
+     * @return 生成的随机数
+     */
+    public String generateRandom(int length) {
+        int randomInt = random.nextInt();
+        int max = (int) Math.pow(10, length) - 1;
+        randomInt = randomInt % max;
+        return String.format("%0" + length + "d", randomInt);
+    }
+    /**
+     * 校验手机号是否合法
+     * @param phoneNumber 手机号
+     * @return boolean
+     */
+    public boolean isPhoneNumber(String phoneNumber) {
+        String regex = "^[1]([3][0-9]{1}|[5-9][0-9]{1})[0-9]{8}$";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(phoneNumber);
+        return matcher.matches();
     }
 }
