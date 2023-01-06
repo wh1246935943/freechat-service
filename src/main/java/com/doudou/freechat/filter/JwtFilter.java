@@ -32,9 +32,7 @@ public class JwtFilter extends GenericFilterBean {
             FilterChain filterChain
     ) throws IOException, ServletException {
         HttpServletRequest req = (HttpServletRequest) servletRequest;
-        /**
-         * 过滤不需要鉴权的请求
-         */
+        // 过滤不需要鉴权的请求
         if (ignoreUrls.contains(req.getRequestURI())) {
             filterChain.doFilter(servletRequest, servletResponse);
             return;
@@ -53,21 +51,15 @@ public class JwtFilter extends GenericFilterBean {
             filterChain.doFilter(servletRequest, servletResponse);
             return;
         }
-        /**
-         * 解析失败
-         */
-//        HttpServletResponse res = (HttpServletResponse) servletResponse;
-//        res.setContentType("application/json;charset=utf-8");
-//        res.setStatus(403);
-//        PrintWriter out = res.getWriter();
-//        out.println("{\"message\": \"未登录或登录状态已过期\", \"code\": 401}");
-//        out.flush();
-//        out.close();
-
+        // 解析失败
         checkFail(servletResponse);
 
     }
 
+    /**
+     * 当用户请求权限解析失败后统一返回错误信息
+     * @param servletResponse 返回头对象
+     */
     private void checkFail(ServletResponse servletResponse) throws IOException {
         HttpServletResponse res = (HttpServletResponse) servletResponse;
         res.setContentType("application/json;charset=utf-8");

@@ -67,8 +67,7 @@ public class DDUtil {
     }
     /**
      * 解析cookies中的token,获取用户名
-     * @return 解析失败null
-     * @return 解析成功返回用户名
+     * @return 解析失败null 解析成功返回用户名
      */
     public String getUserNameByToken(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();

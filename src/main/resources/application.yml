@@ -10,6 +10,8 @@ spring:
 
 server:
   port: 9001
+  servlet:
+    context-path: /doudou
 
 # 配置 Mybatis.xml 位置
 mybatis:
@@ -20,10 +22,12 @@ ignored:
     - /
     - /error
     - /favicon.ico
-    - /auth/login
-    - /auth/register
-    - /auth/verCode
-    - /common/pre
+    - /doudou/error
+    - /doudou/favicon.ico
+    - /doudou/auth/login
+    - /doudou/auth/register
+    - /doudou/auth/verCode
+    - /doudou/common/pre
 
 jwt:
   token: token # cookie字段名
