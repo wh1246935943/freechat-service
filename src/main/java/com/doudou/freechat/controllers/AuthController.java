@@ -80,29 +80,35 @@ public class AuthController {
     }
 
     @GetMapping("/verCode")
-    public CommonResult getVerCode(@RequestParam(name = "phoneNumber", required = true) String phoneNumber) {
-        // 校验手机号是否合法
-        if (!ddUtil.isPhoneNumber(phoneNumber)) {
-            return CommonResult.failed("手机号码格式不正确");
+    public CommonResult getVerCode(@RequestParam(name = "email", required = true) String email) {
+        ddUtil.sendEmail(email, "免聊注册验证码", ddUtil.generateRandom(6));
+        // 校验邮箱是否合法
+        if (!ddUtil.isEmail(email)) {
+            return CommonResult.failed("邮箱格式不正确");
         }
 
-        // 检查手机号是否已经注册
-        List<UserDao> users = userService.getUserByPhoneNumber(phoneNumber);
+        // 检查邮箱是否已经绑定
+        List<UserDao> users = userService.getUserByPhoneNumber(email);
         if (users.size() > 0) {
             return CommonResult.failed("该手机号已经注册");
         }
-        String codeKey = phoneNumber + "_verCode";
-        String codeValue = verCodeCacheService.get(codeKey);
 
+        // 从缓存中获取验证码，如果有则已经发送过，将该验证码重新发送给用户邮箱
+        String codeValue = verCodeCacheService.get(email);
         // 检查是否发送过验证码
-        if (codeValue instanceof String) {
-            return CommonResult.success(codeValue);
+        if (codeValue == null) {
+            codeValue = ddUtil.generateRandom(6);
         }
 
-        // 生成验证码，返回给前端并设置到缓存
-        codeValue = ddUtil.generateRandom(6);
-        verCodeCacheService.save(codeKey, codeValue);
-        return CommonResult.success(codeValue);
+        // 发送验证码
+        boolean isSend = ddUtil.sendEmail(email, "免聊注册验证码", codeValue);
+        if (isSend) {
+            // 将已经发送的验证码放入缓存
+            verCodeCacheService.save(email, codeValue);
+            return CommonResult.success(null, "验证码已发送到: " + email);
+        } else {
+            return CommonResult.failed("验证码发送失败，请重试");
+        }
     }
 
     @PostMapping("/register")

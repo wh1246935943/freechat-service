@@ -27,20 +27,19 @@ public class VerCodeCacheServiceImpl implements VerCodeCacheService {
 
     @Override
     @CacheEvict(cacheNames = "verCodeCache")
-    public String delete(String key) {
-        return entries.remove(key);
+    public void delete(String key) {
+        entries.remove(key);
     }
 
     @Override
     @CachePut(cacheNames = "verCodeCache", key = "#key")
-    public String save(String key, String value) {
+    public void save(String key, String value) {
         entries.put(key, value);
-        return value;
     }
 
     @Override
     @CachePut(cacheNames = "verCodeCache", key = "#key")
-    public String update(String key, String value) {
-        return entries.put(key, value);
+    public void update(String key, String value) {
+        entries.put(key, value);
     }
 }
