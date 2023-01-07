@@ -13,5 +13,7 @@ public interface UserService {
 
     List<UserDao> getUserByPhoneNumber(String phoneNumber);
 
+    List<UserDao> getUserByEmail(String email);
+
     UserDao addUser(UserRegisterParamDto userRegisterParam);
 }

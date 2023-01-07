@@ -5,7 +5,5 @@ public interface VerCodeCacheService {
 
     void delete(String key);
 
-    void save(String key, String value);
-
-    void update(String key, String value);
+    String save(String key, String value);
 }

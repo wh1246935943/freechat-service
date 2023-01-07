@@ -14,32 +14,19 @@ import java.util.Map;
 @Service
 public class VerCodeCacheServiceImpl implements VerCodeCacheService {
 
-    private final Map<String, String> entries = new HashMap<>();
-
-    @Resource
-    private CacheManager cacheManager;
-
     @Override
     @Cacheable(cacheNames = "verCodeCache")
     public String get(String key) {
-        return key;
+        return null;
     }
 
     @Override
-    @CacheEvict(cacheNames = "verCodeCache")
-    public void delete(String key) {
-        entries.remove(key);
-    }
-
-    @Override
-    @CachePut(cacheNames = "verCodeCache", key = "#key")
-    public void save(String key, String value) {
-        entries.put(key, value);
-    }
+    @CacheEvict(cacheNames = "verCodeCache", key = "#key")
+    public void delete(String key) {}
 
     @Override
     @CachePut(cacheNames = "verCodeCache", key = "#key")
-    public void update(String key, String value) {
-        entries.put(key, value);
+    public String save(String key, String value) {
+        return value;
     }
 }

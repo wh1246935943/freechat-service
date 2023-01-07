@@ -13,6 +13,10 @@
         SELECT * FROM user WHERE phoneNumber=#{phoneNumber}
     </select>
 
+    <select id="getUserByEmail" parameterType="String" resultType="com.doudou.freechat.dao.UserDao">
+        SELECT * FROM user WHERE email=#{email}
+    </select>
+
     <insert id="addUser" useGeneratedKeys="true" keyProperty="id" parameterType="com.doudou.freechat.dao.UserDao">
         insert into user (
                           userName,

@@ -81,16 +81,15 @@ public class AuthController {
 
     @GetMapping("/verCode")
     public CommonResult getVerCode(@RequestParam(name = "email", required = true) String email) {
-        ddUtil.sendEmail(email, "免聊注册验证码", ddUtil.generateRandom(6));
         // 校验邮箱是否合法
         if (!ddUtil.isEmail(email)) {
             return CommonResult.failed("邮箱格式不正确");
         }
 
         // 检查邮箱是否已经绑定
-        List<UserDao> users = userService.getUserByPhoneNumber(email);
+        List<UserDao> users = userService.getUserByEmail(email);
         if (users.size() > 0) {
-            return CommonResult.failed("该手机号已经注册");
+            return CommonResult.failed("该邮箱账号已注册");
         }
 
         // 从缓存中获取验证码，如果有则已经发送过，将该验证码重新发送给用户邮箱
@@ -113,12 +112,28 @@ public class AuthController {
 
     @PostMapping("/register")
     public CommonResult register(@RequestBody UserRegisterParamDto userRegisterParam) {
-        UserDao userDao = userService.addUser(userRegisterParam);
-        if (userDao == null) {
+        // 先检查用户名是否存在
+        String userName = userRegisterParam.getUserName();
+        UserDao userDao = userService.getUserInfoByName(userName);
+        if (userDao != null) {
             return CommonResult.failed("用户名已存在");
         }
+
+        // 检查验证码是否正确
+        String verCode = userRegisterParam.getVerCode();
+        String email = userRegisterParam.getEmail();
+        String cacheVerCode = verCodeCacheService.get(email);
+        if (verCode == null || !verCode.equals(cacheVerCode)) {
+            return CommonResult.failed("邮箱或验证码输入错误");
+        }
+
+        // 添加用户
+        userDao = userService.addUser(userRegisterParam);
+
+        // 返回用户注册信息
         UserVo userVo = new UserVo();
         BeanUtils.copyProperties(userDao, userVo);
+        verCodeCacheService.delete(email);
         return CommonResult.success(userVo, "账号注册成功");
     }
 }

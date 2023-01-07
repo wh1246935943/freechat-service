@@ -4,6 +4,9 @@ package com.doudou.freechat.dao;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.sql.Date;
+import java.sql.Timestamp;
+
 @Setter
 @Getter
 public class UserDao {
