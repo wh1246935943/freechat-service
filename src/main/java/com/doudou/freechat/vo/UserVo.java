@@ -3,6 +3,9 @@ package com.doudou.freechat.vo;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.sql.Date;
+import java.sql.Timestamp;
+
 @Setter
 @Getter
 public class UserVo {

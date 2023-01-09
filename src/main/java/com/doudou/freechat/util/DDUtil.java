@@ -5,9 +5,13 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.security.SecureRandom;
@@ -34,6 +38,9 @@ public class DDUtil {
 
     @Resource
     private RedisTemplate<String, String> redisTemplate;
+
+    @Resource
+    private JavaMailSender javaMailSender;
 
     /**
      * 获取redis中指定key的value
@@ -112,7 +119,7 @@ public class DDUtil {
     public String generateRandom(int length) {
         int randomInt = random.nextInt();
         int max = (int) Math.pow(10, length) - 1;
-        randomInt = randomInt % max;
+        randomInt = Math.abs(randomInt % max);
         return String.format("%0" + length + "d", randomInt);
     }
     /**
@@ -126,4 +133,34 @@ public class DDUtil {
         Matcher matcher = pattern.matcher(phoneNumber);
         return matcher.matches();
     }
+
+    /**
+     * 校验邮箱号是否合法
+     * @param email 手机号
+     * @return boolean
+     */
+    public boolean isEmail(String email) {
+        String regex = "^[a-zA-Z0-9_!#$%&’*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(email);
+        return matcher.matches();
+    }
+
+    public boolean sendEmail(String to, String subject, String body) {
+        MimeMessage message = javaMailSender.createMimeMessage();
+
+        try {
+            MimeMessageHelper helper = new MimeMessageHelper(message, true);
+            helper.setTo(to);
+            helper.setSubject(subject);
+            helper.setText(body, true);
+
+            javaMailSender.send(message);
+            return true;
+        } catch (MessagingException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 }

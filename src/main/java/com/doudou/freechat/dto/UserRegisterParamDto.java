@@ -13,6 +13,8 @@ public class UserRegisterParamDto {
     private String userName;
     @NotEmpty
     private String password;
+    @NotEmpty
+    private String verCode;
     @Email
     private String email;
     private String phoneNumber;

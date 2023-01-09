@@ -15,6 +15,8 @@ public interface UserMapper {
 
     List<UserDao> getUserByPhoneNumber(String phoneNumber);
 
+    List<UserDao> getUserByEmail(String email);
+
     int addUser(UserDao record);
 
 }
