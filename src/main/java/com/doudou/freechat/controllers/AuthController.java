@@ -123,11 +123,15 @@ public class AuthController {
         String verCode = userRegisterParam.getVerCode();
         String email = userRegisterParam.getEmail();
         String cacheVerCode = verCodeCacheService.get(email);
-        if (verCode == null || !verCode.equals(cacheVerCode)) {
-            return CommonResult.failed("邮箱或验证码输入错误");
+        // 如果用户提交的邮箱账号查不到验证码信息则提示先获取验证码
+        if (cacheVerCode == null) {
+            return CommonResult.failed("请先获取验证码");
+        }
+        if (!cacheVerCode.equals(verCode)) {
+            return CommonResult.failed("验证码输入错误");
         }
 
-        // 添加用户
+        // 添加用户 这里不做判断是因为前面的操作已经覆盖了失败的场景
         userDao = userService.addUser(userRegisterParam);
 
         // 返回用户注册信息
