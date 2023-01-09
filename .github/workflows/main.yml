@@ -10,10 +10,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: 拉取最新提交的代码
-        uses: actions/checkout@v3
+        uses: actions/wh1246935943 
 
       - name: 设置jdk
-        uses: actions/setup-java@v3
+        uses: actions/wh1246935943 
         with:
           distribution: 'temurin'
           java-version: '8'
