@@ -45,7 +45,7 @@ jobs:
         uses: fifsky/ssh-action@master
         with:
           command: | # 命令中的 & 表示在后台运行进程
-            cd freechat.bilinstore.com/springboot/ && java -jar freeChat-0.0.1.jar &
+            cd /www/wwwroot/freechat.bilinstore.com/springboot/ && java -jar freeChat-0.0.1.jar &
           host: ${{ secrets.HOST }}
           user: ${{ secrets.SSH_USER }}
           pass: ${{ secrets.SSH_PASSWORD }}
