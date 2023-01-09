@@ -1,10 +1,8 @@
-name: Java CI with Maven
+name: freechat auto build
 
 on:
   push:
     # 分支
-    branches: [ master ]
-  pull_request:
     branches: [ master ]
 
 jobs:
@@ -37,8 +35,8 @@ jobs:
       - name: 将 JAR 包部署到服务器
         uses: garygrossgarten/github-action-scp@release
         with:
-          local: target/github-actions-springboot-0.0.1-SNAPSHOT.jar
-          remote: blog.imzjw.cn/actions/github-actions-springboot.jar
+          local: target/freeChat-0.0.1.jar
+          remote: freechat.bilinstore.com/springboot/freeChat-0.0.1.jar
           host: ${{ secrets.HOST }}
           username: ${{ secrets.SSH_USER }}
           password: ${{ secrets.SSH_PASSWORD }}
@@ -47,7 +45,7 @@ jobs:
         uses: fifsky/ssh-action@master
         with:
           command: | # 命令中的 & 表示在后台运行进程
-            cd blog.imzjw.cn/actions/ && java -jar github-actions-springboot.jar &
+            cd /www/wwwroot/freechat.bilinstore.com/springboot/ && java -jar freeChat-0.0.1.jar &
           host: ${{ secrets.HOST }}
           user: ${{ secrets.SSH_USER }}
           pass: ${{ secrets.SSH_PASSWORD }}
