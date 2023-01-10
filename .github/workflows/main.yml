@@ -36,11 +36,11 @@ jobs:
         uses: garygrossgarten/github-action-scp@release
         with:
           local: target/freeChat-0.0.1.jar
-          remote: freechat.bilinstore.com/springboot/freeChat-0.0.1.jar
+          remote: http://43.136.217.59:9002/springboot/freeChat-0.0.1.jar
           host: ${{ secrets.HOST }}
           username: ${{ secrets.SSH_USER }}
           password: ${{ secrets.SSH_PASSWORD }}
-      - name: 在服务器上执行 java -jar，请确保服务器安装了 JDK
+      - name: 在服务器上执行java -jar
         if: always()
         uses: fifsky/ssh-action@master
         with:
