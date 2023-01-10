@@ -64,4 +64,14 @@ public class UserServiceImpl implements UserService {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return dateFormat.format(date);
     }
+
+    /**
+     * 删除用户
+     * @param userName 被删除用户的if
+     * @return 返回用户注册成功的的用户信息，如果用户已经存在则返回null
+     */
+    @Override
+    public int deleteUser(String userName) {
+        return userMapper.deleteUser(userName);
+    }
 }

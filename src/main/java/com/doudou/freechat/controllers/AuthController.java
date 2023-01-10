@@ -110,6 +110,11 @@ public class AuthController {
         }
     }
 
+    /**
+     * 注册账号
+     * @param userRegisterParam 用户注册提交信息
+     * @return 返回注册的用户信息
+     */
     @PostMapping("/register")
     public CommonResult register(@RequestBody UserRegisterParamDto userRegisterParam) {
         // 先检查用户名是否存在

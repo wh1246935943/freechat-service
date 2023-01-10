@@ -4,6 +4,7 @@ import com.doudou.freechat.dao.UserDao;
 import com.doudou.freechat.dto.UserRegisterParamDto;
 
 import java.util.List;
+import java.util.Map;
 
 public interface UserService {
 
@@ -16,4 +17,6 @@ public interface UserService {
     List<UserDao> getUserByEmail(String email);
 
     UserDao addUser(UserRegisterParamDto userRegisterParam);
+    // 登陆状态下才允许删除账号
+    int deleteUser(String userName);
 }

@@ -19,4 +19,6 @@ public interface UserMapper {
 
     int addUser(UserDao record);
 
+    int deleteUser(String userName);
+
 }

@@ -44,4 +44,15 @@ public class UserController {
         BeanUtils.copyProperties(userDao, userVo);
         return CommonResult.success(userVo);
     }
+
+    @PostMapping("/delete")
+    public CommonResult deleteUser(HttpServletRequest request) {
+        String userName = ddUtil.getUserNameByToken(request);
+        int tag = userService.deleteUser(userName);
+        if (tag == 1) {
+            ddUtil.delRedisValue(userName);
+            return CommonResult.success(null, "账号删除成功");
+        }
+        return CommonResult.failed("操作失败");
+    }
 }
