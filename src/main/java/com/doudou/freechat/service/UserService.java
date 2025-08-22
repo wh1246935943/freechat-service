@@ -4,7 +4,6 @@ import com.doudou.freechat.dao.UserDao;
 import com.doudou.freechat.dto.UserRegisterParamDto;
 
 import java.util.List;
-import java.util.Map;
 
 public interface UserService {
 

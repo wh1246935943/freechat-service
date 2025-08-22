@@ -46,7 +46,7 @@ public class AuthController {
      * 并将用户名存入redis
      */
     @PostMapping("/login")
-    public CommonResult login(
+    public CommonResult<LoginVo> login(
             @RequestBody Map<String, String> user,
             HttpServletResponse response
     ) {
@@ -73,14 +73,14 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public CommonResult logout(HttpServletRequest request) {
+    public CommonResult<String> logout(HttpServletRequest request) {
         String userName = ddUtil.getUserNameByToken(request);
         ddUtil.delRedisValue(userName);
         return CommonResult.success(null, "退出成功");
     }
 
     @GetMapping("/verCode")
-    public CommonResult getVerCode(@RequestParam(name = "email", required = true) String email) {
+    public CommonResult<String> getVerCode(@RequestParam(name = "email", required = true) String email) {
         // 校验邮箱是否合法
         if (!ddUtil.isEmail(email)) {
             return CommonResult.failed("邮箱格式不正确");
@@ -116,7 +116,7 @@ public class AuthController {
      * @return 返回注册的用户信息
      */
     @PostMapping("/register")
-    public CommonResult register(@RequestBody UserRegisterParamDto userRegisterParam) {
+    public CommonResult<UserVo> register(@RequestBody UserRegisterParamDto userRegisterParam) {
         // 先检查用户名是否存在
         String userName = userRegisterParam.getUserName();
         UserDao userDao = userService.getUserInfoByName(userName);

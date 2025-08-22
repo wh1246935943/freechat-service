@@ -23,7 +23,7 @@ public class UserController {
     DDUtil ddUtil;
 
     @GetMapping("/{id}")
-    public CommonResult getUserInfo(@PathVariable long id) {
+    public CommonResult<UserVo> getUserInfo(@PathVariable long id) {
         UserDao userDao = userService.getUserInfoById(id);
         if (userDao == null) {
             return CommonResult.failed("查询的用户不存在");
@@ -34,7 +34,7 @@ public class UserController {
     }
 
     @GetMapping("/info")
-    public CommonResult getMyUserInfo(HttpServletRequest request) {
+    public CommonResult<UserVo> getMyUserInfo(HttpServletRequest request) {
         String userName = ddUtil.getUserNameByToken(request);
         UserDao userDao = userService.getUserInfoByName(userName);
         if (userDao == null) {
@@ -46,7 +46,7 @@ public class UserController {
     }
 
     @PostMapping("/delete")
-    public CommonResult deleteUser(HttpServletRequest request) {
+    public CommonResult<String> deleteUser(HttpServletRequest request) {
         String userName = ddUtil.getUserNameByToken(request);
         int tag = userService.deleteUser(userName);
         if (tag == 1) {
